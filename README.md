@@ -1,7 +1,7 @@
 # FlutterFire + Riverpod
 
 Example usage of [Flutter Firebase](https://pub.dev/packages/flutter_fire) with [Riverpod](https://pub.dev/packages/riverpod) to manage realtime streams. 
-S
+
 - Listen to Firebase Auth State
 - Listen to realtime Firestore data based on current user's UID
 
