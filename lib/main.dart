@@ -28,52 +28,44 @@ class MyApp extends ConsumerWidget {
 
     final user = ref.watch(userProvider);
 
-    // return MaterialApp(
-    //   home: Scaffold(
-    //     appBar: AppBar(
-    //       title: Text(helloWorld),
-    //     ),
-    //   ),
-    // );
-
-      return user.when(
-        data: (user) {
-          return MaterialApp(
-            home: Scaffold(
-              appBar: AppBar(title: Text(helloWorld)),
-              body: Column(
-                children: [Text(user?.uid ?? 'not signed in'), AccountDetails()],
-              ),
-              floatingActionButton: FloatingActionButton(
-                child: user != null ? Icon(Icons.outbond) : Icon(Icons.person),
-                onPressed: () async {
-                  if (user != null) {
-                    FirebaseAuth.instance.signOut();
-                  } else {
-                    var credential =
-                        await FirebaseAuth.instance.signInAnonymously();
-                    var ref = FirebaseFirestore.instance
-                        .collection('accounts')
-                        .doc(credential.user?.uid);
-                    ref.set({'hello': 'my account!!!'});
-                  }
-                },
-              ),
+    return user.when(
+      data: (user) {
+        return MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(title: Text(helloWorld)),
+            body: Column(
+              children: [Text(user?.uid ?? 'not signed in'), AccountDetails()],
             ),
-          );
-        },
-        error: (e, s) => Text('error'),
-        loading: () => Text('loading'),
-      );
+            floatingActionButton: FloatingActionButton(
+              child: user != null ? Icon(Icons.outbond) : Icon(Icons.person),
+              onPressed: () async {
+                if (user != null) {
+                  FirebaseAuth.instance.signOut();
+                } else {
+                  var credential =
+                      await FirebaseAuth.instance.signInAnonymously();
+                  var ref = FirebaseFirestore.instance
+                      .collection('accounts')
+                      .doc(credential.user?.uid);
+                  ref.set({'hello': 'my account!!!'});
+                }
+              },
+            ),
+          ),
+        );
+      },
+      error: (e, s) => Text('error'),
+      loading: () => Text('loading'),
+    );
   }
 }
 
-
+// Join provider Streams
 final dataProvider = StreamProvider<Map?>(
   (ref) {
     final userStream = ref.watch(userProvider);
 
-    var user = userStream.asData?.value;
+    var user = userStream.value; //.asData?.value;
 
     if (user != null) {
       var docRef =
@@ -84,7 +76,6 @@ final dataProvider = StreamProvider<Map?>(
     }
   },
 );
-
 
 // Listen to data in Firestore
 class AccountDetails extends ConsumerWidget {
